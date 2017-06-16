@@ -1,0 +1,11 @@
+/* This is a CSS file */
+
+.my-icon {
+  background-repeat: no-repeat;
+  margin-left: 10%;
+  margin-top: 6px;
+}
+
+.my-icon:active {
+  background-image: url(logo.png);
+}

@@ -1,0 +1,324 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+    <script src="components/loader.js"></script>
+    <script src="lib/onsenui/js/onsenui.min.js"></script>
+
+    <link rel="stylesheet" href="components/loader.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="icon.css">
+    <link rel="stylesheet" href="lib/onsenui/css/onsen-css-components.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        ons.ready(function() {
+            console.log("Onsen UI is ready!");
+        });
+
+        window.fn = {};
+        window.fn.open = function() {
+            var menu = document.getElementById('menu');
+            menu.open();
+        };
+        window.fn.load = function(page) {
+            var content = document.getElementById('content');
+            var menu = document.getElementById('menu');
+            content
+                .load(page)
+                .then(menu.close.bind(menu));
+        };
+    </script>
+
+
+
+    <!-- Funcao do DB -->
+    <script>
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        function onDeviceReady() {
+
+            window.alert("Criará a base de dados e mostrará o conteúdo");
+
+        }
+
+
+        function executeQuery(tx) {
+            var v1 = (document.getElementById('admNome').value);
+            var v2 = (document.getElementById('admChavec').value);
+            var v3 = (document.getElementById('admChavee').value);
+            var v4 = (document.getElementById('admChavel').value);
+            tx.executeSql('DROP TABLE IF EXISTS TestTable');
+            tx.executeSql('CREATE TABLE IF NOT EXISTS TestTable (id unique, data, chavec, chavee, chavel)');
+            tx.executeSql('INSERT INTO TestTable (id, data, chavec, chavee, chavel) VALUES (1,"' + v1 + '","' + v2 + '","' + v3 + '","' + v4 + '")');
+            /* tx.executeSql('INSERT INTO TestTable (id, data) VALUES (2, "Lima")');
+             tx.executeSql('INSERT INTO TestTable (id, data) VALUES (3, "Teste")');
+             tx.executeSql('INSERT INTO TestTable (id, data) VALUES (4, "ECP")');        
+             tx.executeSql('INSERT INTO TestTable (id, data) VALUES (5, "CASA")');
+             tx.executeSql('INSERT INTO TestTable (id, data) VALUES (6, "LOVE")');
+             tx.executeSql('INSERT INTO TestTable (id, data) VALUES (7, "Marilia")');*/
+
+        }
+
+        function queryDB(tx) {
+            //var v1 = 1; //
+            //var v1 = (document.getElementById('admNome').value); 
+            //document.writeln(v1);
+            //var v2 = document.getElementById('b');
+            tx.executeSql('SELECT * FROM TestTable', [], querySuccess, errorCB);
+        }
+
+        function querySuccess(tx, results) {
+            var len = results.rows.length;
+            // window.alert("Adicionados " + len + " linhas de registro na base de dados." );
+            for (var i = 0; i < len; i++) {
+                //document.writeln("row = " + i + " ID = " + results.rows.item(i).id + " Data = " + results.rows.item(i).data+"<br/>");
+                //var ler = ("row = " + i + " ID = " + results.rows.item(i).id + " Data = " + results.rows.item(i).data+" Chave Conf = "+ results.rows.item(i).chavec+" Chave Esc = "+ results.rows.item(i).chavee+" Chave Lei = "+ results.rows.item(i).chavel+"<br/>");
+                var lerNome = (results.rows.item(i).data);
+                var lerChavec = (results.rows.item(i).chavec);
+                var lerChavee = (results.rows.item(i).chavee);
+                var lerChavel = (results.rows.item(i).chavel);
+                //document.writeln(ler);
+                document.getElementById('exibeDados').innerHTML = lerNome;
+                document.getElementById('exibeChavec').innerHTML = lerChavec;
+                document.getElementById('exibeChavee').innerHTML = lerChavee;
+                document.getElementById('exibeChavel').innerHTML = lerChavel;
+
+            }
+        }
+
+        //Callback function when the transaction is failed.
+        function errorCB(err) {
+            console.log("Erro de execução: " + err.code);
+        }
+
+        // Callback function when the transaction is success.
+        function successCB() {
+            var db = window.openDatabase("Database", "1.0", "TestDatabase", 200000);
+            db.transaction(queryDB, errorCB);
+        }
+
+        function createDB() {
+            var db = window.openDatabase("Database", "1.0", "TestDatabase", 200000);
+            db.transaction(executeQuery, errorCB /*, successCB*/ );
+
+        }
+    </script>
+
+    <!-- botão confirmar -->
+    <script>
+        function btnConfirma() {
+            confirm("Tem certeza que deseja alterar os dados do cadastro?");
+
+
+        }
+    </script>
+
+    <script>
+        function MsgSucesso() {
+
+            window.alert("Salvo com sucesso!");
+
+        }
+    </script>
+
+    <script>
+        function WebSocketTest() {
+            if ("WebSocket" in window) {
+                alert("WebSocket é suportado!");
+
+                // Let us open a web socket
+                var ws = new WebSocket("ws://172.16.12.36:32000/echo");
+
+                ws.onopen = function() {
+                    //alert("Web Socket is connected, send data using send");
+
+                    ws.send("http://172.16.12.36/output.cgi?text=InterrupcaoProgramacao&submit=Submit");
+                    alert("Menssagem enviada");
+                };
+
+                ws.onmessage = function(evt) {
+                    var received_msg = evt.data;
+                    alert("Menssage recebida");
+                };
+
+                ws.onclose = function() {
+                    // websocket is closed.
+                    alert("Conexão fechada");
+                };
+            } else {
+                // The browser doesn't support WebSocket
+                alert("WebSocket NÂO suportado!");
+            }
+        }
+    </script>
+
+    <script>
+        //enviar as credenciais para conexao SSID
+
+        function btnAMWsendAuth() {
+            var xhr = new XMLHttpRequest();
+            //http://captiveportal.net/output.cgi?text=SSIDWIFI:"+Nome_Rede+"|SENHAWIFI:"+Nome_Senha+"|&submit=Submit"
+            var ssid = (document.getElementById('ssid').value);
+            var swifi = (document.getElementById('swifi').value);
+            var Chave_Escrita = (document.getElementById('Chave_Escrita').value);
+            var Chave_Leitura = (document.getElementById('Chave_Leitura').value);
+            var Canal_Max = (document.getElementById('Canal_Max').value);
+            var Canal_Aplicativo = (document.getElementById('Canal_Aplicativo').value);
+            //document.getElementById('btnt').href='https://www.youtube.com/watch?v=' +ssid;
+            xhr.open("GET", 'http://172.20.13.1/output.cgi?text=SSIDWIFI:' + ssid + '|SENHAWIFI:' + swifi + '|Escrita:' + Chave_Escrita + '|Leitura:' + Chave_Leitura + '|CanalMax:' + Canal_Max + '|CanalAplicativo:' + Canal_Aplicativo +'|&submit=Submit', false);
+            //xhr.open("GET", 'http://172.16.12.180/output.cgi?text=Escrita:' + Chave_Escrita + '|Leitura:' + Chave_Leitura + '|CanalMax:' + Canal_Max + '|CanalAplicativo:' + Canal_Aplicativo + '|&submit=Submit', false);
+            xhr.send();
+
+
+        }
+    </script>
+
+
+    <script>
+        function resetCentral() {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "http://172.16.12.180/output.cgi?text=InterrupcaoProgramacao&submit=Submit", false);
+            xhr.send();
+        }
+    </script>
+
+    <script>
+        function teste(){
+        var chave1 = lerChavel;
+        alert("'+lerChavel+'");
+        }
+    </script>
+
+
+</head>
+
+<body>
+    <ons-splitter>
+        <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+            <ons-page>
+                <ons-list>
+                    <ons-list-item onclick="fn.load('home.html')" tappable>
+                        Cadastrar admin
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.load('settings.html'); successCB()" tappable>
+                        Dados da conta
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.load('about.html')" tappable>
+                        Central
+                    </ons-list-item>
+                </ons-list>
+            </ons-page>
+        </ons-splitter-side>
+        <ons-splitter-content id="content" page="home.html"></ons-splitter-content>
+    </ons-splitter>
+
+    <ons-template id="home.html">
+        <ons-page>
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">
+                    ALARD MAX WIFI
+                    <img src="logo.png" width="20px" height="20px" class="my-icon">
+                </div>
+            </ons-toolbar>
+            <p style="text-align: center; opacity: 0.6; padding-top: 20px;">
+                Digite seu nome <br />
+                <input type="text" value="" id='admNome' name="admNome" /> <br /> Digite a chave de configuração <br />
+                <input type="text" value="" id='admChavec' name="admChavec" /> <br /> Digite a chave de escrita<br />
+                <input type="text" value="" id='admChavee' name="admChavee" /><br /> Digite a chave de leitura<br />
+                <input type="text" value="" id='admChavel' name="admChavel" /><br />
+
+
+
+                <input type="button" value="OK" onclick="createDB();btnConfirma();MsgSucesso();"> <br />
+
+
+
+                <!-- Aqui vão os campos do administrador <br /> -->
+
+
+            </p>
+        </ons-page>
+    </ons-template>
+
+    <ons-template id="settings.html">
+        <ons-page>
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+
+
+
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">
+                    ALARD MAX WIFI
+                    <img src="logo.png" width="20px" height="20px" class="my-icon">
+                </div>
+
+            </ons-toolbar>
+            <p>
+                <h5>Dados da Conta: </h5><br /> Nome: <br />
+
+                <p id="exibeDados" name="exibeDados" value="" type="text" readonly="yes"> </p><br /> Chave de Configuração: <br />
+
+                <p id="exibeChavec" name="exibeChavec" value="" type="text" readonly="yes"> </p> <br /> Chave de Escrita: <br />
+
+                <p id="exibeChavee" name="exibeChavee" value="" type="text" readonly="yes"> </p><br /> Chave de Leitura: <br />
+                <p id="exibeChavel" name="exibeChavel" value="" type="text" readonly="yes"> </p>
+
+            </p>
+        </ons-page>
+    </ons-template>
+
+    <ons-template id="about.html">
+        <ons-page>
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button onclick="fn.open()">
+                        <ons-icon icon="ion-navicon, material:md-menu"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
+                <div class="center">
+                    ALARD MAX WIFI
+                    <img src="logo.png" width="20px" height="20px" class="my-icon">
+                </div>
+            </ons-toolbar>
+            <div class="center">
+                <strong> Cadastro da central: </strong><br /> ID da rede WiFI
+                <input type="text" name="ssid" id="ssid" value=""></input><br /> Senha do Wifi .
+                <input type="text" name="swifi" id="swifi" value=""></input><br /><br />
+
+
+                <strong>Enviar as chaves para a Max</strong> <br> Chave de Escrita
+                <input id="Chave_Escrita" name="Chave_Escrita" type="text"> </input><br> Chave de Leitura
+                <input id="Chave_Leitura" name="Chave_Leitura" type="text"> </input><br> Canal da Max
+                <input id="Canal_Max" name="Canal_Max" type="text"> </input><br> Canal do Aplicativo
+                <input id="Canal_Aplicativo" name="Canal_Aplicativo" type="text"> </input><br>
+
+                <ons-button onclick="btnAMWsendAuth()">Login WIFI </ons-button> <br /><br />
+
+                <ons-button onclick="resetCentral()">Resetar</ons-button>
+                <br />
+                <ons-button onclick="teste()">Testar chave</ons-button>
+                
+
+            </div>
+
+        </ons-page>
+    </ons-template>
+
+
+
+</body>
+
+</html>

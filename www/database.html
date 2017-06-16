@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <script type="text/javascript" charset="utf-8" src="components/loader.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+
+
+    function onDeviceReady() {
+        var db = window.openDatabase("database", "1.0", "testdatabase", 1000000);
+    }
+
+    </script>
+  </head>
+  <body>
+  <pre>Web SQL Database</pre>
+  </body>
+</html>
